@@ -4,57 +4,87 @@
  * @flow
  */
 
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
+  Navigator,
+  TabBarIOS,
   Text,
   View
 } from 'react-native';
 
-var bridges_api_client = require('./bridges_client');
-var styles = require('./styles/question_feed').questionFeed;
-
+import PersonShowScreen from './app/screens/PersonShowScreen'
+import PeopleIndexScreen from './app/screens/PeopleIndexScreen'
+import ProfileScreen from './app/screens/ProfileScreen'
 
 export default class BridgesAppExample extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            'response': []
-        }
-    }
+  constructor() {
+    super();
+    this.state = {selectedTab: 'tabOne'}
+  }
+  setTab(tabId) {
+    this.setState({selectedTab: tabId})
+  }
 
-    componentDidMount() {
-        bridges_api_client.getQuestions().then(response => {
-            this.setState({
-                'response': response
-            });
-            console.log(this.state);
-        });
-    }
+  _renderScene(route, navigator) {
+    var globalNavigatorProps = { navigator }
 
-    render() {
+    switch(route.ident) {
+      case "PeopleIndex":
         return (
-            /* <ListView
-                dataSource={this.state.response}
-                renderRow={(rowData) =><Text>{rowData}</Text>}/> */
-
-            <View style={styles.container}>
-                {this.state.response.map(function(question) {
-                    return (
-                        <View style={{textAlign: 'left', paddingBottom: 20}}>
-                            <Text style={styles.title}>
-                                {question.title}
-                            </Text>
-                            <Text style={styles.description}>
-                                {question.description}
-                            </Text>
-                        </View>
-                    );
-                })}
-            </View>
-        );
+          <PeopleIndexScreen
+            {...globalNavigatorProps} />
+        )
+      case "PersonShow":
+        return (
+        <PersonShowScreen
+            {...globalNavigatorProps} 
+            question = {route.question}/>
+        )
+      case "Profile":
+        return (
+        <ProfileScreen
+            {...globalNavigatorProps} />
+        )
+      default:
+        return (
+        <PeopleIndexScreen
+          {...globalNavigatorProps} />
+        )
     }
+  }
+
+  render() {
+    return (
+      <TabBarIOS>
+        <TabBarIOS.Item 
+        systemIcon="search"
+        selected={this.state.selectedTab == 'tabOne'}
+        onPress={() => this.setTab('tabOne')}>
+          <Navigator 
+          initialRoute={{ident: "PeopleIndex"}}
+          ref="appNavigator"
+          renderScene={this._renderScene} />
+        </TabBarIOS.Item>
+        <TabBarIOS.Item
+        systemIcon="contacts"
+        selected={this.state.selectedTab == 'tabTwo'}
+        onPress={() => this.setTab('tabTwo')}>
+          <Navigator 
+          initialRoute={{ident: "Profile"}}
+          ref="appNavigator"
+          renderScene={this._renderScene} />
+          </TabBarIOS.Item>
+      </TabBarIOS>
+    )
+  }
 }
 
 AppRegistry.registerComponent('BridgesAppExample', () => BridgesAppExample);
