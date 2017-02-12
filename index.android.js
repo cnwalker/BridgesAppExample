@@ -4,50 +4,88 @@
  * @flow
  */
 
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ * @flow
+ */
+
 import React, { Component } from 'react';
 import {
   AppRegistry,
   StyleSheet,
+  Navigator,
   Text,
   View
 } from 'react-native';
 
+import TabNavigator from 'react-native-tab-navigator';
+
+import PersonShowScreen from './app/screens/PersonShowScreen'
+import PeopleIndexScreen from './app/screens/PeopleIndexScreen'
+import ProfileScreen from './app/screens/ProfileScreen'
+
 export default class BridgesAppExample extends Component {
+  constructor() {
+    super();
+    this.state = {selectedTab: 'tabOne'}
+  }
+  setTab(tabId) {
+    this.setState({selectedTab: tabId})
+  }
+
+  _renderScene(route, navigator) {
+    var globalNavigatorProps = { navigator }
+
+    switch(route.ident) {
+      case "PeopleIndex":
+        return (
+          <PeopleIndexScreen
+            {...globalNavigatorProps} />
+        )
+      case "PersonShow":
+        return (
+        <PersonShowScreen
+            {...globalNavigatorProps}
+            question = {route.question}/>
+        )
+      case "Profile":
+        return (
+        <ProfileScreen
+            {...globalNavigatorProps} />
+        )
+      default:
+        return (
+        <PeopleIndexScreen
+          {...globalNavigatorProps} />
+        )
+    }
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Double tap R on your keyboard to reload,{'\n'}
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
-    );
+      <TabNavigator>
+        <TabNavigator.Item
+        systemIcon="search"
+        selected={this.state.selectedTab == 'tabOne'}
+        onPress={() => this.setTab('tabOne')}>
+          <Navigator
+          initialRoute={{ident: "PeopleIndex"}}
+          ref="appNavigator"
+          renderScene={this._renderScene} />
+        </TabNavigator.Item>
+        <TabNavigator.Item
+        systemIcon="contacts"
+        selected={this.state.selectedTab == 'tabTwo'}
+        onPress={() => this.setTab('tabTwo')}>
+          <Navigator
+          initialRoute={{ident: "Profile"}}
+          ref="appNavigator"
+          renderScene={this._renderScene} />
+          </TabNavigator.Item>
+      </TabNavigator>
+    )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
 
 AppRegistry.registerComponent('BridgesAppExample', () => BridgesAppExample);

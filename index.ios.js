@@ -15,10 +15,11 @@ import {
   AppRegistry,
   StyleSheet,
   Navigator,
-  TabBarIOS,
   Text,
   View
 } from 'react-native';
+
+import TabNavigator from 'react-native-tab-navigator';
 
 import PersonShowScreen from './app/screens/PersonShowScreen'
 import PeopleIndexScreen from './app/screens/PeopleIndexScreen'
@@ -45,7 +46,7 @@ export default class BridgesAppExample extends Component {
       case "PersonShow":
         return (
         <PersonShowScreen
-            {...globalNavigatorProps} 
+            {...globalNavigatorProps}
             question = {route.question}/>
         )
       case "Profile":
@@ -63,26 +64,26 @@ export default class BridgesAppExample extends Component {
 
   render() {
     return (
-      <TabBarIOS>
-        <TabBarIOS.Item 
+      <TabNavigator>
+        <TabNavigator.Item
         systemIcon="search"
         selected={this.state.selectedTab == 'tabOne'}
         onPress={() => this.setTab('tabOne')}>
-          <Navigator 
+          <Navigator
           initialRoute={{ident: "PeopleIndex"}}
           ref="appNavigator"
           renderScene={this._renderScene} />
-        </TabBarIOS.Item>
-        <TabBarIOS.Item
+        </TabNavigator.Item>
+        <TabNavigator.Item
         systemIcon="contacts"
         selected={this.state.selectedTab == 'tabTwo'}
         onPress={() => this.setTab('tabTwo')}>
-          <Navigator 
+          <Navigator
           initialRoute={{ident: "Profile"}}
           ref="appNavigator"
           renderScene={this._renderScene} />
-          </TabBarIOS.Item>
-      </TabBarIOS>
+          </TabNavigator.Item>
+      </TabNavigator>
     )
   }
 }
